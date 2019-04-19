@@ -1,0 +1,241 @@
+*** Settings ***
+Resource          ../../resource/rs_common_library.txt
+
+*** Keywords ***
+kw_send_post
+    [Arguments]    ${url}    ${request_body}=    ${content_type}=application/json;charset=utf-8    ${need_new_context}=${True}
+    [Documentation]    描述：发送post请求，并获取返回状态码和消息体
+    ...
+    ...    参数说明：
+    ...
+    ...    修改记录：
+    ...
+    ...    修改内容：xxxx
+    ...
+    ...    修 改 人：xxxxx
+    ...
+    ...    修改日期：年-月-日
+    Run Keyword If    ${need_new_context}==${True}    HttpLibrary.HTTP.Create Http Context    ${context}    http
+    #设置Request header
+    Log    ${global_headers}
+    : FOR    ${key}    ${value}    IN    @{global_headers}
+    \    Set Request Header    ${key}    ${value}
+    Set Request Header    Content-Type    ${content_type}
+    #设置Request Body
+    log    ${request_body}
+    Comment    Run Keyword If    '${request_body}'!=''    Set Request Body    ${request_body}
+    ${req_length}    Get Length    ${request_body}
+    Run Keyword If    ${req_length} >0    Set Request Body    ${request_body}
+    #发送Post请求
+    Log    ${url}
+    Run Keyword And Ignore Error    HttpLibrary.HTTP.POST    ${url}
+    #获取返回状态码和消息体
+    ${res_status}=    Get Response Status
+    ${res_body}=    Get Response Body
+    Log    ${res_status}
+    log    ${res_body}
+    [Return]    ${res_status}    ${res_body}
+
+kw_send_delete
+    [Arguments]    ${url}    ${request_body}=${EMPTY}    ${need_new_context}=${True}    ${content_type}=application/json;charset=utf-8
+    [Documentation]    描述：发送delete请求，并获取返回状态码和消息体
+    ...
+    ...    参数说明：
+    ...
+    ...    修改记录：
+    ...
+    ...    修改内容：xxxx
+    ...
+    ...    修 改 人：xxxxx
+    ...
+    ...    修改日期：年-月-日
+    Run Keyword If    ${need_new_context}==${True}    HttpLibrary.HTTP.Create Http Context    ${context}    http
+    #设置Request header
+    : FOR    ${key}    ${value}    IN    @{global_headers}
+    \    Set Request Header    ${key}    ${value}
+#    Set Request Header    Content-Type    ${content_type}
+    #    ${request_body_length}    Get Length    ${request_body}
+    #    Set Request Header    Content-Length    ${request_body_length}
+    #设置Request Body
+    log    ${request_body}    TRACE
+    log    ${request_body}
+    Run Keyword If    '${request_body}'!=''    Set Request Body    ${request_body}
+    #发送Delete请求
+    Log    ${url}
+    Run Keyword And Ignore Error    HttpLibrary.HTTP.DELETE    ${url}
+    #获取返回状态码和消息体
+    ${res_status}=    Get Response Status
+    ${res_body}=    Get Response Body
+    Log    ${res_status}    TRACE
+    log    ${res_body}    TRACE
+    [Return]    ${res_status}    ${res_body}
+
+kw_send_put
+    [Arguments]    ${url}    ${request_body}=    ${need_new_context}=${True}    ${content_type}=application/json; charset=UTF-8
+    [Documentation]    描述：发送put请求，并获取返回状态码和消息体
+    ...
+    ...    参数说明：
+    ...
+    ...    修改记录：
+    ...
+    ...    修改内容：xxxx
+    ...
+    ...    修 改 人：xxxxx
+    ...
+    ...    修改日期：年-月-日
+    Run Keyword If    ${need_new_context}==${True}    HttpLibrary.HTTP.Create Http Context    ${context}    https
+    #设置Request header
+    : FOR    ${key}    ${value}    IN    @{global_headers}
+    \    Set Request Header    ${key}    ${value}
+    Set Request Header    Content-Type    ${content_type}
+    #设置Request Body
+    log    ${request_body}
+    Run Keyword If    '${request_body}'!=''    Set Request Body    ${request_body}
+    #发送Put请求
+    Log    ${url}
+    Run Keyword And Ignore Error    HttpLibrary.HTTP.PUT    ${url}
+    #获取返回状态码和消息体
+    ${res_status}=    Get Response Status
+    ${res_body}=    Get Response Body
+    Log    ${res_status}
+    log    ${res_body}
+    [Return]    ${res_status}    ${res_body}
+
+kw_send_get
+    [Arguments]    ${url}    ${need_new_context}=${True}    ${protocol}=http
+    [Documentation]    描述：发送get请求，并获取返回状态码和消息体
+    ...
+    ...    参数说明：
+    ...
+    ...    修改记录：
+    ...
+    ...    修改内容：增加${protocol}入参，可选
+    ...
+    ...    修 改 人：lwx551925
+    ...
+    ...    修改日期：2018年5月30日
+    log    ${context}
+    Run Keyword If    ${need_new_context}==${True}    HttpLibrary.HTTP.Create Http Context    ${context}    ${protocol}
+    #设置Request header
+    : FOR    ${key}    ${value}    IN    @{global_headers}
+    \    Set Request Header    ${key}    ${value}
+    #发送Get请求
+    Log    ${url}
+    Run Keyword And Ignore Error    HttpLibrary.HTTP.GET    ${url}
+    #获取返回状态码和消息体
+    ${res_status}=    Get Response Status
+    ${res_body}=    Get Response Body
+    Log    ${res_status}    TRACE
+    [Return]    ${res_status}    ${res_body}
+
+kw_send_patch
+    [Arguments]    ${url}    ${request_body}=
+    [Documentation]    描述：发送post请求，并获取返回状态码和消息体
+    ...
+    ...    参数说明：
+    ...
+    ...    修改记录：
+    ...
+    ...    修改内容：xxxx
+    ...
+    ...    修 改 人：xxxxx
+    ...
+    ...    修改日期：年-月-日
+    #设置Request header
+    Fail    unsupported htttp request type: PATCH
+    Log    ${global_headers}
+    : FOR    ${key}    ${value}    IN    @{global_headers}
+    \    Set Request Header    ${key}    ${value}
+    #设置Request Body
+    log    ${request_body}    TRACE
+    Comment    Run Keyword If    '${request_body}'!=''    Set Request Body    ${request_body}
+    ${req_length}    Get Length    ${request_body}
+    Run Keyword If    ${req_length} >0    Set Request Body    ${request_body}
+    #发送Post请求
+    Log    ${url}
+    Run Keyword And Ignore Error    HttpLibrary.HTTP.POST    ${url}
+    #获取返回状态码和消息体
+    ${res_status}=    Get Response Status
+    ${res_body}=    Get Response Body
+    Log    ${res_status}    TRACE
+    log    ${res_body}    TRACE
+    [Return]    ${res_status}    ${res_body}
+
+kw_check_res_pass
+    [Arguments]    ${res_status}    ${res_body}=${EMPTY}    ${except_str}=${EMPTY}    ${except_str_counts}=${1}    ${no_except_str}=no_except_str
+    [Documentation]    描述：判断接口调用是否返回错误。错误值包括200、201、204等，可自行完善
+    ...
+    ...    参数说明：
+    ...                 except_str：[可选] 判断res_body中是否存在该字符串
+    ...          except_str_counts：[可选] 判断res_body中except_str出现的次数
+    ...             del_except_str：[可选] 判断res_body中是否不存在该字符串
+    ...    修改记录：
+    ...
+    ...    修 改 人：汤毅
+    ...
+    ...    修改内容：[1][2][3][4]
+    ...
+    ...    修改日期：2018-4-27
+    @{res_status_list}    Split String    ${res_status}
+    ${res_code}    Set Variable    ${res_status_list[0]}
+    @{res_codes}    Create List    200    201    204    202
+    @{res_error_codes}    Create List    400    401    403    404    409    422    500
+    # [1]异常响应打印详细信息
+    #Run Keyword If    "${res_code}" in ${res_error_codes}   kw_print_res_body    ${res_code}    ${res_body}
+    ${result}    Run Keyword If    "${res_code}" not in ${res_codes}    Fail    ResponseCode is ${res_code}, not within @{res_codes}.
+    ...    ResponseBody is ${res_body}
+    ...    ELSE    set variable    ${True}
+
+    ${res_body_len}    get length    ${res_body}
+    ${res_body_dict}    Run Keyword If    ${res_body_len}>0    parse json    ${res_body}    ELSE    create list
+    # [2]增加期待存在指定字符串的判断
+    ${res_body_len}    get length    ${res_body}
+    return from keyword if    ${res_body_len}==0
+    ${except_str_len}    get length    ${except_str}
+    ${no_except_str_len}    get length    ${no_except_str}
+    ${res_body_dict}    run keyword if    ${res_body_len}>0    parse json    ${res_body}    ELSE    create dictionary
+    ${check_except_str}    evaluate    '${except_str}' in str(${res_body_dict}) if ${res_body_len}>0 and ${except_str_len} else True
+    Should Be True    ${check_except_str}    ResponseBody is str(${res_body_dict}), not within ${except_str}.
+    # [3]增加指定字符串出现指定次数的判断
+    ${check_except_str_counts}    evaluate    str(${res_body_dict}).count('${except_str}') == int(${except_str_counts}) if ${res_body_len}>0 and ${except_str_len}>0 and ${except_str_counts} else True
+    Should Be True    ${check_except_str_counts}    ResponseBody is str(${res_body_dict}), within ${except_str} but not with counts ${except_str_counts}.
+    # [4]增加期待不存在指定字符串的判断
+    ${check_del_except_str}    evaluate    '${no_except_str}' not in str(${res_body_dict}) if ${res_body_len}>0 and ${no_except_str_len}>0 else True
+    Should Be True    ${check_del_except_str}    ResponseBody is str(${res_body_dict}), but within ${no_except_str}.
+    [Return]    ${result}
+
+kw_check_res_fail
+    [Arguments]    ${res_status}    ${res_body}=    ${respect_resbody}=
+    [Documentation]    描述：判断接口调用是否返回错误。错误值包括400、401、404、500等，可自行完善
+    ...
+    ...    参数说明：
+    ...
+    ...    修改记录：
+    ...
+    ...    修改内容：xxxx
+    ...
+    ...    修 改 人：xxxxx
+    ...
+    ...    修改日期：年-月-日
+    @{res_status_list}    Split String    ${res_status}
+    ${res_code}    Set Variable    ${res_status_list[0]}
+    @{res_codes}    Create List    400    401    404    500    403    405
+    ...    409    422
+    : FOR    ${i}    IN    @{res_codes}
+    \    ${status}    Set Variable IF    "${res_code}" == "${i}"    ${i}    ${0}
+    \    Exit For Loop If    "${res_code}" == "${i}"
+    Run Keyword If    ${status} == ${0}    Fail    ResponseCode is ${res_code}, not within @{res_codes}.\nResponseBody is ${res_body}
+    #Run Keyword If    '${respect_resbody}'!=''    kw_check_resbody    ${res_body}    ${respect_resbody}
+
+kw_login
+    [Arguments]    ${host}    ${username}=    ${password}=
+    [Documentation]    描述：登陆
+    ...
+    ...    参数说明：
+    #获取返回状态码和消息体
+    ${global_headers}    create list
+    Set Global Variable    ${global_headers}    ${global_headers}
+    Append to List    ${global_headers}    Content-Type    application/json;charset=UTF-8.
+    log    ${global_headers}
+    Set Global Variable    ${context}    ${host}
+    [Return]    ${global_headers}
