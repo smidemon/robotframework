@@ -1,0 +1,17 @@
+*** Settings ***
+Library           BuiltIn
+Library           String
+Library           Dialogs
+Library           HttpLibrary.HTTP
+Library           RequestsLibrary
+Library           OperatingSystem
+Library           SSHLibrary
+Library           base64
+Library           DateTime
+Library           Collections
+Library           ../commonlib/SSHLogin.py
+Library           ../commonlib/chaDelete.py
+Resource          ../keyword/01_base/kw_common.txt
+Resource          ../keyword/02_interface/alg_init/interface_alg.txt
+Resource          ../keyword/03_business/alg_init/business_alg.txt
+Resource          rs_default.txt
